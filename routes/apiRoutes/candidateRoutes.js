@@ -64,7 +64,7 @@ router.delete('/candidate/:id', (req, res) => {
 
 //create a candidate
 router.post('/candidate', ({body}, res) => {
-    console.log(body);
+    //console.log(body);
     const errors = inputCheck(body, 'first_name', 'last_name', 'industry_connected');
     if(errors) {
         res.status(400).json({error: errors});
@@ -91,8 +91,7 @@ router.post('/candidate', ({body}, res) => {
 
 //update a candidate's party id
 router.put('/candidate/:id', (req, res) => {
-    console.log(req.body);
-    console.log(req);
+    //console.log(req.body);
     const errors = inputCheck(req.body, 'party_id');
     if(errors){
         res.status(400).json({error: errors});
