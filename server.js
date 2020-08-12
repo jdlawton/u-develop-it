@@ -80,6 +80,7 @@ app.delete('/api/candidate/:id', (req, res) => {
 
 //create a candidate
 app.post('/api/candidate', ({body}, res) => {
+    console.log(body);
     const errors = inputCheck(body, 'first_name', 'last_name', 'industry_connected');
     if(errors) {
         res.status(400).json({error: errors});
