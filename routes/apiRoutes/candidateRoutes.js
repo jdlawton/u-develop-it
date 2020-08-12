@@ -1,19 +1,10 @@
 const express = require('express');
-const inputCheck = require('./utils/inputCheck');
-const db = require('./db/database');
-
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-//const apiRoutes = require('./routes/apiRoutes');
-//app.use('/api', apiRoutes);
-
-//express middleware
-app.use(express.urlencoded({extended:false}));
-app.use(express.json());
+const router = express.Router();
+const db = require('../../db/database');
+const inputCheck = require('../../utils/inputCheck');
 
 //get all candidates and return as JSON
-router.get('/apicandidates', (req, res) => {
+router.get('/candidates', (req, res) => {
     const sql = `SELECT candidates.*, parties.name
                  AS party_name
                  FROM candidates
@@ -33,7 +24,7 @@ router.get('/apicandidates', (req, res) => {
 });
 
 //get single candidate and return as JSON
-app.get('/api/candidate/:id', (req, res) => {
+router.get('/candidate/:id', (req, res) => {
     const sql = `SELECT candidates.*, parties.name
                  AS party_name
                  FROM candidates
@@ -55,7 +46,7 @@ app.get('/api/candidate/:id', (req, res) => {
 });
 
 //delete a candidate
-app.delete('/api/candidate/:id', (req, res) => {
+router.delete('/candidate/:id', (req, res) => {
     const sql = `DELETE FROM candidates WHERE id = ?`;
     const params = [req.params.id];
     db.run(sql, params, function(err, result) {
@@ -72,8 +63,8 @@ app.delete('/api/candidate/:id', (req, res) => {
 });
 
 //create a candidate
-app.post('/api/candidate', ({body}, res) => {
-    console.log(body);
+router.post('/candidate', ({body}, res) => {
+    //console.log(body);
     const errors = inputCheck(body, 'first_name', 'last_name', 'industry_connected');
     if(errors) {
         res.status(400).json({error: errors});
@@ -99,9 +90,8 @@ app.post('/api/candidate', ({body}, res) => {
 });
 
 //update a candidate's party id
-app.put('/api/candidate/:id', (req, res) => {
-    console.log(req.body);
-    console.log(req);
+router.put('/candidate/:id', (req, res) => {
+    //console.log(req.body);
     const errors = inputCheck(req.body, 'party_id');
     if(errors){
         res.status(400).json({error: errors});
@@ -125,16 +115,4 @@ app.put('/api/candidate/:id', (req, res) => {
     });
 });
 
-
-//default response for any other requests(Not Found) Catch-all
-app.use((req, res) => {
-    res.status(404).end();
-});
-
-//start server after DB connection
-db.on('open', () => {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
-});
-    
+module.exports = router;
